@@ -40,7 +40,53 @@
             </div>
           </div>
           <div class="swiper-content">
-            xxx
+            <ul class="content-list">
+              <li class="list-item">
+                <span class="date">12/3</span>
+                <span class="day">今天</span>
+                <span class="weather-text">
+                    <i class="wi wi-night-alt-cloudy"></i>
+                  多云转晴
+                </span>
+                <span class="weather-value">4~15°C</span>
+              </li>
+              <li class="list-item">
+                <span class="date">12/3</span>
+                <span class="day">今天</span>
+                <span class="weather-text">
+                    <i class="wi wi-night-alt-cloudy"></i>
+                  多云转晴
+                </span>
+                <span class="weather-value">4~15°C</span>
+              </li>
+              <li class="list-item">
+                <span class="date">12/3</span>
+                <span class="day">今天</span>
+                <span class="weather-text">
+                    <i class="wi wi-night-alt-cloudy"></i>
+                  多云转晴
+                </span>
+                <span class="weather-value">4~15°C</span>
+              </li>
+              <li class="list-item">
+                <span class="date">12/3</span>
+                <span class="day">今天</span>
+                <span class="weather-text">
+                    <i class="wi wi-night-alt-cloudy"></i>
+                  多云转晴
+                </span>
+                <span class="weather-value">4~15°C</span>
+              </li>
+              <li class="list-item">
+                <span class="date">12/3</span>
+                <span class="day">今天</span>
+                <span class="weather-text">
+                    <i class="wi wi-night-alt-cloudy"></i>
+                  多云转晴
+                </span>
+                <span class="weather-value">4~15°C</span>
+              </li>
+            </ul>
           </div>
         </div>
       </swiper-slide>
@@ -85,10 +131,8 @@
 
 <style lang="scss" rel="stylesheet/scss">
   .app-container{
-    /*padding-top:3.4rem;*/
   }
   .swiper-item{
-    /*height:600px;*/
     height:100%;
     color: #23ADA1;
     .swiper-header{
@@ -163,6 +207,40 @@
     .swiper-content{
       height: 70%;
       background-color: white;
+      padding-top:.5rem;
+      .content-list{
+        width: 100%;
+        .list-item{
+          display: flex;
+          align-items: center;
+          height:3.2rem;
+          line-height: 3.2rem;
+          border-bottom:1px solid rgba(0,0,0,.1);
+          border-radius: .5rem;
+          box-shadow: 5px 0 5px rgba(0,0,0,.1);
+          margin-bottom:.5rem;
+          padding:0 1.5rem;
+          >.date{
+            width: 20%;
+          }
+          >.day{
+            width: 15%;
+          }
+          >.weather-text{
+            width: 35%;
+            >i{
+              font-size: 1.2rem;
+              display: inline-block;
+              margin-right:.3rem;
+            }
+          }
+          >.weather-value{
+            width: 30%;
+            text-align: right;
+            padding-right:.5rem;
+          }
+        }
+      }
     }
   }
 </style>
