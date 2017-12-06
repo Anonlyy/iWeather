@@ -40,53 +40,106 @@
             </div>
           </div>
           <div class="swiper-content">
-            <ul class="content-list">
-              <li class="list-item">
-                <span class="date">12/3</span>
-                <span class="day">今天</span>
-                <span class="weather-text">
+            <div class="swiper-body">
+              <ul class="content-list">
+                <li class="list-item">
+                  <span class="date">12/3</span>
+                  <span class="day">今天</span>
+                  <span class="weather-text">
                     <i class="wi wi-night-alt-cloudy"></i>
                   多云转晴
                 </span>
-                <span class="weather-value">4~15°C</span>
-              </li>
-              <li class="list-item">
-                <span class="date">12/3</span>
-                <span class="day">今天</span>
-                <span class="weather-text">
+                  <span class="weather-value">4~15°C</span>
+                </li>
+                <li class="list-item">
+                  <span class="date">12/3</span>
+                  <span class="day">今天</span>
+                  <span class="weather-text">
                     <i class="wi wi-night-alt-cloudy"></i>
                   多云转晴
                 </span>
-                <span class="weather-value">4~15°C</span>
-              </li>
-              <li class="list-item">
-                <span class="date">12/3</span>
-                <span class="day">今天</span>
-                <span class="weather-text">
+                  <span class="weather-value">4~15°C</span>
+                </li>
+                <li class="list-item">
+                  <span class="date">12/3</span>
+                  <span class="day">今天</span>
+                  <span class="weather-text">
                     <i class="wi wi-night-alt-cloudy"></i>
                   多云转晴
                 </span>
-                <span class="weather-value">4~15°C</span>
-              </li>
-              <li class="list-item">
-                <span class="date">12/3</span>
-                <span class="day">今天</span>
-                <span class="weather-text">
+                  <span class="weather-value">4~15°C</span>
+                </li>
+                <li class="list-item">
+                  <span class="date">12/3</span>
+                  <span class="day">今天</span>
+                  <span class="weather-text">
                     <i class="wi wi-night-alt-cloudy"></i>
                   多云转晴
                 </span>
-                <span class="weather-value">4~15°C</span>
-              </li>
-              <li class="list-item">
-                <span class="date">12/3</span>
-                <span class="day">今天</span>
-                <span class="weather-text">
+                  <span class="weather-value">4~15°C</span>
+                </li>
+                <li class="list-item">
+                  <span class="date">12/3</span>
+                  <span class="day">今天</span>
+                  <span class="weather-text">
                     <i class="wi wi-night-alt-cloudy"></i>
                   多云转晴
                 </span>
-                <span class="weather-value">4~15°C</span>
-              </li>
-            </ul>
+                  <span class="weather-value">4~15°C</span>
+                </li>
+              </ul>
+              <div class="content-footer">
+                <div class="footer-item">
+                <span class="item-header">
+                  <Icon type="tshirt" size="30"></Icon>
+                </span>
+                  <span class="item-footer">
+                  适宜
+                </span>
+                </div>
+                <div class="footer-item">
+                <span class="item-header">
+                  <Icon type="umbrella" size="30"></Icon>
+                </span>
+                  <span class="item-footer">
+                  弱
+                </span>
+                </div>
+                <div class="footer-item">
+                <span class="item-header">
+                  <Icon type="android-car" size="30"></Icon>
+                </span>
+                  <span class="item-footer">
+                  适宜
+                </span>
+                </div>
+                <div class="footer-item">
+                <span class="item-header">
+                  <Icon type="plane" size="30"></Icon>
+                </span>
+                  <span class="item-footer">
+                  适宜
+                </span>
+                </div>
+                <div class="footer-item">
+                <span class="item-header">
+                  <Icon type="ios-medical-outline" size="30"></Icon>
+                </span>
+                  <span class="item-footer">
+                  易发
+                </span>
+                </div>
+                <div class="footer-item">
+                <span class="item-header">
+                  <Icon type="ios-basketball-outline" size="30"></Icon>
+                </span>
+                  <span class="item-footer">
+                  较适宜
+                </span>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
       </swiper-slide>
@@ -138,7 +191,6 @@
     .swiper-header{
       padding-top:3.4rem;
       position: relative;
-      /*height:45%;*/
       color: white;
       text-align: center;
       padding-bottom:.2rem;
@@ -190,6 +242,7 @@
             padding-right:.5rem;
           }
           .item-content{
+            width: 80%;
             display: table-cell;
           }
         }
@@ -206,41 +259,60 @@
     }
     .swiper-content{
       height: 70%;
+      overflow-x: hidden;
+      overflow-y: auto;
       background-color: white;
       padding-top:.5rem;
-      .content-list{
-        width: 100%;
-        .list-item{
-          display: flex;
-          align-items: center;
-          height:3.2rem;
-          line-height: 3.2rem;
-          border-bottom:1px solid rgba(0,0,0,.1);
-          border-radius: .5rem;
-          box-shadow: 5px 0 5px rgba(0,0,0,.1);
-          margin-bottom:.5rem;
-          padding:0 1.5rem;
-          >.date{
-            width: 20%;
-          }
-          >.day{
-            width: 15%;
-          }
-          >.weather-text{
-            width: 35%;
-            >i{
-              font-size: 1.2rem;
-              display: inline-block;
-              margin-right:.3rem;
+      .swiper-body{
+        height: 115%;
+        .content-list{
+          width: 100%;
+          .list-item{
+            display: flex;
+            align-items: center;
+            height:3.2rem;
+            line-height: 3.2rem;
+            border-bottom:1px solid rgba(0,0,0,.1);
+            border-radius: .5rem;
+            box-shadow: 5px 0 5px rgba(0,0,0,.1);
+            margin-bottom:.5rem;
+            padding:0 1.5rem;
+            >.date{
+              width: 20%;
+            }
+            >.day{
+              width: 15%;
+            }
+            >.weather-text{
+              width: 35%;
+              >i{
+                font-size: 1.2rem;
+                display: inline-block;
+                margin-right:.3rem;
+              }
+            }
+            >.weather-value{
+              width: 30%;
+              text-align: right;
+              padding-right:.5rem;
             }
           }
-          >.weather-value{
-            width: 30%;
-            text-align: right;
-            padding-right:.5rem;
+        }
+        .content-footer{
+          .footer-item{
+            display: block;
+            float: left;
+            width: 1/3*100%;
+            padding:.5rem 0;
+            text-align: center;
+            .item-header{
+              width: 100%;
+              display: block;
+            }
           }
         }
       }
+
     }
   }
 </style>
