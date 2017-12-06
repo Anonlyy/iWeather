@@ -44,8 +44,8 @@
             <div class="swiper-body">
               <ul class="content-list">
                 <li class="list-item" v-for="item,index in futureWeatherList" v-if="index<=5">
-                  <span class="date">12/3</span>
-                  <span class="day">今天</span>
+                  <span class="date">{{item.date.substring(5,7)}}/{{ item.date.substring(8,10)}}</span>
+                  <span class="day" v-text="item.day"></span>
                   <span class="weather-text">
                     <i class="wi wi-night-alt-cloudy"></i>
                     {{item.text}}
@@ -172,7 +172,6 @@
         },
         mounted(){
           this.innerHeight = window.innerHeight;
-//          this.ListHeight = '123%';
         }
     }
 </script>
@@ -308,7 +307,6 @@
           }
         }
       }
-
     }
   }
 </style>
