@@ -235,7 +235,6 @@
           display: table-cell;
           position: relative;
           width:1/3*100%;
-          padding:0 .7rem;
           >i{
             display: table-cell;
             vertical-align: middle;
