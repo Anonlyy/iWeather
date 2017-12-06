@@ -3,7 +3,7 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
-
+import api from './api/getData'
 import VueAwesomeSwiper from 'vue-awesome-swiper'
 
 // require styles
@@ -12,14 +12,15 @@ import 'swiper/dist/css/swiper.css';
 import "./assets/weather-icons.min.css";
 
 //iview
-import { Button, Icon } from 'iview';
+import { Button, Icon,Spin } from 'iview';
 import 'iview/dist/styles/iview.css';
 Vue.use(VueAwesomeSwiper, /* { default global options } */)
 
 
 Vue.component('Button', Button);
 Vue.component('Icon', Icon);
-
+Vue.component('Spin', Spin);
+Vue.prototype.api = api;
 
 
 Vue.config.productionTip = false

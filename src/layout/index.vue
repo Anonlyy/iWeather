@@ -1,39 +1,40 @@
 <template>
   <div class="app-container">
+    <Spin size="large" fix v-if="isLoading"></Spin>
     <swiper :options="swiperOption" :style="{height:innerHeight+'px'}">
       <!-- slides -->
       <swiper-slide>
         <div class="swiper-item">
           <div class="swiper-header">
             <div class="header-tip">
-              <p class="update-time">21:05更新</p>
-              <span class="air-quality"> 空气质量:优</span>
+              <p class="update-time">{{currentWeatherInfo.update_time | updateTime}} 更新</p>
+              <span class="air-quality" v-text="'空气质量:'+currentWeatherInfo.air_quality"> </span>
             </div>
             <div class="header-inner">
               <i class="wi wi-night-alt-cloudy"></i>
-              <p class="weather-text">多云转晴</p>
-              <p class="weather-value">-4 ~ 7°C</p>
+              <p class="weather-text" v-text="currentWeatherInfo.text"></p>
+              <p class="weather-value" v-text="currentWeatherInfo.high_low+' °C'"></p>
             </div>
             <div class="header-footer-list">
               <div class="content">
                 <Icon type="thermometer" size="25"></Icon>
                 <div class="item-content">
                   <p>当前温度</p>
-                  <p>15 °C</p>
+                  <p v-text="weatherNotice.temperature+' °C'"></p>
                 </div>
               </div>
               <div class="content">
                 <Icon type="nuclear" size="25"></Icon>
                 <div class="item-content">
-                  <p>西南风</p>
-                  <p>2级</p>
+                  <p v-text="weatherNotice.wind_direction+'风'"></p>
+                  <p v-text="weatherNotice.wind_scale+'级'"></p>
                 </div>
               </div>
               <div class="content">
                 <Icon type="speedometer" size="25"></Icon>
                 <div class="item-content">
                   <p>气压</p>
-                  <p>1010 hPa</p>
+                  <p v-text="weatherNotice.pressure+' hPa'"></p>
                 </div>
               </div>
 
@@ -42,53 +43,17 @@
           <div class="swiper-content">
             <div class="swiper-body">
               <ul class="content-list">
-                <li class="list-item">
+                <li class="list-item" v-for="item,index in futureWeatherList" v-if="index<=5">
                   <span class="date">12/3</span>
                   <span class="day">今天</span>
                   <span class="weather-text">
                     <i class="wi wi-night-alt-cloudy"></i>
-                  多云转晴
+                    {{item.text}}
                 </span>
-                  <span class="weather-value">4~15°C</span>
-                </li>
-                <li class="list-item">
-                  <span class="date">12/3</span>
-                  <span class="day">今天</span>
-                  <span class="weather-text">
-                    <i class="wi wi-night-alt-cloudy"></i>
-                  多云转晴
-                </span>
-                  <span class="weather-value">4~15°C</span>
-                </li>
-                <li class="list-item">
-                  <span class="date">12/3</span>
-                  <span class="day">今天</span>
-                  <span class="weather-text">
-                    <i class="wi wi-night-alt-cloudy"></i>
-                  多云转晴
-                </span>
-                  <span class="weather-value">4~15°C</span>
-                </li>
-                <li class="list-item">
-                  <span class="date">12/3</span>
-                  <span class="day">今天</span>
-                  <span class="weather-text">
-                    <i class="wi wi-night-alt-cloudy"></i>
-                  多云转晴
-                </span>
-                  <span class="weather-value">4~15°C</span>
-                </li>
-                <li class="list-item">
-                  <span class="date">12/3</span>
-                  <span class="day">今天</span>
-                  <span class="weather-text">
-                    <i class="wi wi-night-alt-cloudy"></i>
-                  多云转晴
-                </span>
-                  <span class="weather-value">4~15°C</span>
+                  <span class="weather-value" v-text="item.high_low+'°C'"></span>
                 </li>
               </ul>
-              <div class="content-footer">
+              <div class="content-footer clearfix">
                 <div class="footer-item">
                 <span class="item-header">
                   <Icon type="tshirt" size="30"></Icon>
@@ -162,22 +127,52 @@
 </template>
 
 <script>
+  import {WeatherInfo,WeatherNotice,FutureWeatherInfo} from '../api/class'
     export default {
-        name: '',
+        name: 'index',
         data() {
             return {
               innerHeight:0,
+              ListHeight:0,
+              cityName:'东莞',
+              currentWeatherInfo:new WeatherInfo('null','null','null','null','null','null','null'),
+              weatherNotice:new WeatherNotice('xx','xx','xx','xx'),
+              futureWeatherInfo:new FutureWeatherInfo('xx','xx','xx','xx','xx'),
+              futureWeatherList:[],
+              isLoading:true,
               swiperOption: {
                 pagination: {
                   el: '.swiper-pagination'
                 },
-                parallax : true,
-                // some swiper options...
               }
             }
         },
+        created(){
+          const _this = this;
+          _this.api.getCurrentWeatherInfo().then(
+            res=>{
+              _this.cityName = res.data.weather[0].city_name;
+              let data = res.data.weather[0];
+              _this.currentWeatherInfo = new WeatherInfo(data.city_id,data.city_name,data.now.text,data.last_update,data.now.code,data.now.air_quality.city.quality,data.future[0].low+'~'+data.future[0].high)
+              _this.weatherNotice = new WeatherNotice(data.now.temperature,data.now.wind_direction,data.now.wind_scale,data.now.pressure);
+
+              for(let item of data.future){
+                _this.futureWeatherInfo = new FutureWeatherInfo(item.date,item.low+'~'+item.high,item.day,item.text,item.code1);
+                _this.futureWeatherList.push(_this.futureWeatherInfo);
+              }
+              _this.isLoading = false;
+              console.log(_this.futureWeatherList);
+            }
+          )
+        },
+        filters:{
+          updateTime(value){
+            return value.substring(11,16)
+          }
+        },
         mounted(){
           this.innerHeight = window.innerHeight;
+//          this.ListHeight = '123%';
         }
     }
 </script>
@@ -195,7 +190,8 @@
       text-align: center;
       padding-bottom:.2rem;
       background-image: linear-gradient(300deg, #16B0A1 0%, #3CDAAF 100%);
-      border-radius: .5rem;
+      border-bottom-left-radius: .5rem;
+      border-bottom-right-radius: .5rem;
       box-shadow: 5px 5px 10px rgba(0,0,0,.1);
       .header-tip{
         position: absolute;
@@ -208,7 +204,7 @@
         .air-quality{
           margin:.5rem 0;
           display: inline-block;
-          padding:.2rem;
+          padding:.2rem .4rem;
           border:1px solid white;
           border-radius: .3rem;
         }
@@ -235,6 +231,7 @@
           display: table-cell;
           position: relative;
           width:1/3*100%;
+          padding:0 .7rem;
           >i{
             display: table-cell;
             vertical-align: middle;
@@ -263,7 +260,7 @@
       background-color: white;
       padding-top:.5rem;
       .swiper-body{
-        height: 115%;
+        margin-bottom: 115px;
         .content-list{
           width: 100%;
           .list-item{
@@ -315,3 +312,4 @@
     }
   }
 </style>
+
