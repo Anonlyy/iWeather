@@ -54,53 +54,11 @@
                 </li>
               </ul>
               <div class="content-footer clearfix">
-                <div class="footer-item">
-                <span class="item-header">
-                  <Icon type="tshirt" size="30"></Icon>
-                </span>
-                  <span class="item-footer">
-                  适宜
-                </span>
-                </div>
-                <div class="footer-item">
-                <span class="item-header">
-                  <Icon type="umbrella" size="30"></Icon>
-                </span>
-                  <span class="item-footer">
-                  弱
-                </span>
-                </div>
-                <div class="footer-item">
-                <span class="item-header">
-                  <Icon type="android-car" size="30"></Icon>
-                </span>
-                  <span class="item-footer">
-                  适宜
-                </span>
-                </div>
-                <div class="footer-item">
-                <span class="item-header">
-                  <Icon type="plane" size="30"></Icon>
-                </span>
-                  <span class="item-footer">
-                  适宜
-                </span>
-                </div>
-                <div class="footer-item">
-                <span class="item-header">
-                  <Icon type="ios-medical-outline" size="30"></Icon>
-                </span>
-                  <span class="item-footer">
-                  易发
-                </span>
-                </div>
-                <div class="footer-item">
-                <span class="item-header">
-                  <Icon type="ios-basketball-outline" size="30"></Icon>
-                </span>
-                  <span class="item-footer">
-                  较适宜
-                </span>
+                <div class="footer-item" v-for="item in todaySuggestionList">
+                  <span class="item-header">
+                    <Icon :type="item.icon" size="30"></Icon>
+                  </span>
+                  <span class="item-footer" v-text="item.content"></span>
                 </div>
               </div>
             </div>
@@ -127,7 +85,7 @@
 </template>
 
 <script>
-  import {WeatherInfo,WeatherNotice,FutureWeatherInfo} from '../api/class'
+  import {WeatherInfo,WeatherNotice,FutureWeatherInfo,TodaySuggestion} from '../api/class'
     export default {
         name: 'index',
         data() {
@@ -135,10 +93,37 @@
               innerHeight:0,
               ListHeight:0,
               cityName:'东莞',
-              currentWeatherInfo:new WeatherInfo('null','null','null','null','null','null','null'),
-              weatherNotice:new WeatherNotice('xx','xx','xx','xx'),
-              futureWeatherInfo:new FutureWeatherInfo('xx','xx','xx','xx','xx'),
+              currentWeatherInfo:new WeatherInfo('null','null','null','null','null','null','null'), //当天天气信息
+              weatherNotice:new WeatherNotice('xx','xx','xx','xx'),   //天气提示
+              futureWeatherInfo:new FutureWeatherInfo('xx','xx','xx','xx','xx'), //未来天气信息
+              todaySuggestion:new TodaySuggestion('xx','xx','xx','xx','xx','xx'),
               futureWeatherList:[],
+              todaySuggestionList:[
+                {
+                  icon:'tshirt',
+                  content:''
+                },
+                {
+                  icon:'umbrella',
+                  content:''
+                },
+                {
+                  icon:'android-car',
+                  content:''
+                },
+                {
+                  icon:'plane',
+                  content:''
+                },
+                {
+                  icon:'ios-medical-outline',
+                  content:''
+                },
+                {
+                  icon:'ios-basketball-outline',
+                  content:''
+                }
+              ],
               isLoading:true,
               swiperOption: {
                 pagination: {
@@ -153,28 +138,28 @@
             res=>{
               _this.cityName = res.data.weather[0].city_name;
               let data = res.data.weather[0];
+              let suggest = data.today.suggestion;
               _this.currentWeatherInfo = new WeatherInfo(data.city_id,data.city_name,data.now.text,data.last_update,_this.api.getCodeIcon(data.now.code).iconName,data.now.air_quality.city.quality,data.future[0].low+'~'+data.future[0].high)
               _this.weatherNotice = new WeatherNotice(data.now.temperature,data.now.wind_direction,data.now.wind_scale,data.now.pressure);
-
+              _this.todaySuggestion = new TodaySuggestion(suggest.dressing.brief,suggest.uv.brief,suggest.car_washing.brief,suggest.travel.brief,suggest.flu.brief,suggest.sport.brief);
+              let i=0;
+              for(let item in _this.todaySuggestion){
+                _this.todaySuggestionList[i].content = _this.todaySuggestion[item];
+                i++;
+              }
               for(let item of data.future){
                 _this.futureWeatherInfo = new FutureWeatherInfo(item.date,item.low+'~'+item.high,item.day,item.text,_this.api.getCodeIcon(item.code1).iconName);
                 _this.futureWeatherList.push(_this.futureWeatherInfo);
               }
               _this.isLoading = false;
-              console.log(_this.futureWeatherList);
+              console.log(_this.todaySuggestionList);
             }
           );
-
-
-          console.log();
         },
         filters:{
           updateTime(value){
             return value.substring(11,16);
           },
-          weatherCode(value){
-//            return this.api.getCodeIcon(value);
-          }
         },
         mounted(){
           this.innerHeight = window.innerHeight;

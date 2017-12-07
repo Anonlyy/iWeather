@@ -30,3 +30,15 @@ export class FutureWeatherInfo {
     this.code = code
   }
 }
+
+
+export class TodaySuggestion{
+  constructor(dressing,uv,car_washing,travel,flu,sport){
+    this.dressing = dressing,  //体感
+    this.uv = uv,  //紫外线
+    this.car_washing = car_washing, //洗车
+    this.travel = travel,  //旅游
+    this.flu = flu, //感冒
+    this.sport = sport  //运动
+  }
+}

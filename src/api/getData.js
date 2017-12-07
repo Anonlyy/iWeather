@@ -188,10 +188,14 @@ export default ({
     return axios.get(`https://weixin.jirengu.com/weather`)
   },
 
+  /**
+   * 获取天气code码
+   * @param code
+   * @returns {*}
+   */
   getCodeIcon(code){
     return codeList[code];
   },
-  
 })
 
 
