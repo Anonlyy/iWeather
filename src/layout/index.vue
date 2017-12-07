@@ -11,7 +11,7 @@
               <span class="air-quality" v-text="'空气质量:'+currentWeatherInfo.air_quality"> </span>
             </div>
             <div class="header-inner">
-              <i class="wi wi-night-alt-cloudy"></i>
+              <i :class="'wi '+currentWeatherInfo.code"></i>
               <p class="weather-text" v-text="currentWeatherInfo.text"></p>
               <p class="weather-value" v-text="currentWeatherInfo.high_low+' °C'"></p>
             </div>
@@ -47,7 +47,7 @@
                   <span class="date">{{item.date.substring(5,7)}}/{{ item.date.substring(8,10)}}</span>
                   <span class="day" v-text="item.day"></span>
                   <span class="weather-text">
-                    <i class="wi wi-night-alt-cloudy"></i>
+                    <i :class="'wi '+item.code"></i>
                     {{item.text}}
                 </span>
                   <span class="weather-value" v-text="item.high_low+'°C'"></span>
@@ -153,21 +153,27 @@
             res=>{
               _this.cityName = res.data.weather[0].city_name;
               let data = res.data.weather[0];
-              _this.currentWeatherInfo = new WeatherInfo(data.city_id,data.city_name,data.now.text,data.last_update,data.now.code,data.now.air_quality.city.quality,data.future[0].low+'~'+data.future[0].high)
+              _this.currentWeatherInfo = new WeatherInfo(data.city_id,data.city_name,data.now.text,data.last_update,_this.api.getCodeIcon(data.now.code).iconName,data.now.air_quality.city.quality,data.future[0].low+'~'+data.future[0].high)
               _this.weatherNotice = new WeatherNotice(data.now.temperature,data.now.wind_direction,data.now.wind_scale,data.now.pressure);
 
               for(let item of data.future){
-                _this.futureWeatherInfo = new FutureWeatherInfo(item.date,item.low+'~'+item.high,item.day,item.text,item.code1);
+                _this.futureWeatherInfo = new FutureWeatherInfo(item.date,item.low+'~'+item.high,item.day,item.text,_this.api.getCodeIcon(item.code1).iconName);
                 _this.futureWeatherList.push(_this.futureWeatherInfo);
               }
               _this.isLoading = false;
               console.log(_this.futureWeatherList);
             }
-          )
+          );
+
+
+          console.log();
         },
         filters:{
           updateTime(value){
-            return value.substring(11,16)
+            return value.substring(11,16);
+          },
+          weatherCode(value){
+//            return this.api.getCodeIcon(value);
           }
         },
         mounted(){
