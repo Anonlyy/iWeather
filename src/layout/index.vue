@@ -127,7 +127,13 @@
               isLoading:true,
               swiperOption: {
                 pagination: {
-                  el: '.swiper-pagination'
+                  el: '.swiper-pagination',
+                  dynamicBullets: true
+                },
+                on: {
+                  slideChangeTransitionEnd: function(){
+                    console.log(this.activeIndex);//切换结束时，告诉我现在是第几个slide
+                  },
                 },
               }
             }
