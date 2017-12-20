@@ -1,10 +1,10 @@
 <template>
   <div class="app-container">
     <Spin size="large" fix v-if="isLoading"></Spin>
-    <swiper :options="swiperOption" :style="{height:innerHeight+'px'}">
+    <swiper :options="swiperOption" :style="{height:innerHeight+'px'}" ref="mySwiper">
       <!-- slides -->
       <swiper-slide>
-        <div class="swiper-item">
+        <div class="swiper-item ">
           <div class="swiper-header">
             <div class="header-tip">
               <p class="update-time">{{currentWeatherInfo.update_time | updateTime}} 更新</p>
@@ -37,7 +37,6 @@
                   <p v-text="weatherNotice.pressure+' hPa'"></p>
                 </div>
               </div>
-
             </div>
           </div>
           <div class="swiper-content">
@@ -66,18 +65,11 @@
           </div>
         </div>
       </swiper-slide>
-      <!--
-      <swiper-slide>
-        <div class="swiper-item">
-          xxxx
+      <swiper-slide v-for="item in cityList">
+        <div class="swiper-item normal-item">
+          {{item}}
         </div>
       </swiper-slide>
-      <swiper-slide>
-        <div class="swiper-item">
-          xxxx
-        </div>
-      </swiper-slide>
-      --!>
       <!-- Optional controls -->
       <div class="swiper-pagination"  slot="pagination"></div>
     </swiper>
@@ -89,6 +81,7 @@
     export default {
         name: 'index',
         data() {
+            const _this = this;
             return {
               innerHeight:0,
               ListHeight:0,
@@ -131,13 +124,19 @@
                   dynamicBullets: true
                 },
                 on: {
-                  slideChangeTransitionEnd: function(){
-                    console.log(this.activeIndex);//切换结束时，告诉我现在是第几个slide
-                  },
+                  slideChangeTransitionEnd:function (event) {
+                    _this.getWeatherInfo(this.activeIndex);
+                  }
                 },
-              }
+              },
+              cityList:[]
             }
         },
+      computed:{
+        swiper() {
+          return this.$refs.mySwiper.swiper
+        }
+      },
         created(){
           const _this = this;
           _this.api.getCurrentWeatherInfo().then(
@@ -161,6 +160,9 @@
               console.log(_this.todaySuggestionList);
             }
           );
+          for(let i =0;i<window.localStorage.length-1;i++){
+            _this.cityList.push(window.localStorage.getItem(window.localStorage.key(i)));
+          }
         },
         filters:{
           updateTime(value){
@@ -169,6 +171,11 @@
         },
         mounted(){
           this.innerHeight = window.innerHeight;
+        },
+        methods:{
+          getWeatherInfo(key){
+            console.log(key)
+          }
         }
     }
 </script>
@@ -192,6 +199,7 @@
       .header-tip{
         position: absolute;
         right: .5rem;
+        padding-top:.5rem;
         .update-time{
           text-align: right;
           font-size: .6rem;
@@ -305,6 +313,9 @@
         }
       }
     }
+  }
+  .normal-item{
+    padding-top:3.4rem;
   }
 </style>
 

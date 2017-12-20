@@ -21,10 +21,8 @@
         v-on:enter="enter"
         v-on:leave="leave"
       >
-        <li class="list-item" v-for="item in searchResult" :key="item.path">{{item.path}}</li>
+        <li class="list-item" v-for="(item,index) in searchResult" :key="item.path" @click="addCity(item)">{{item.path}}</li>
       </transition-group>
-
-
     </div>
   </div>
 </template>
@@ -37,15 +35,22 @@
               inputValue:'',
               maxlength:20,
               searchResult:[],
-              isLoading:false
+              cityId:'',
             }
         },
-      watch:{
-        inputValue(newValue){
-          this.searchCity();
-        }
-      },
-      methods:{
+        watch:{
+          inputValue(newValue){
+            this.searchCity();
+          }
+        },
+        mounted(){
+//          window.localStorage.clear();
+          console.log(window.localStorage);
+//          for(var i=0; i<window.localStorage.length;i++){
+//            console.log('localStorage里存储的第'+i+'条数据的名字为：'+window.localStorage.key(i)+',值为：'+window.localStorage.getItem(window.localStorage.key(i)));
+//          }
+        },
+        methods:{
         searchCity:_.debounce(
           function (){
             const _this = this;
@@ -62,11 +67,28 @@
               }
             ).catch(
               error=>{
-                console.log('获取cityId错误',error);
+                _this.$Message.error('获取cityId错误',error);
               }
             )
           },500),
+        addCity(value){
+          const _this = this;
+          _this.api.getWeatherInfo(value.id).then(
+            res=>{
+              if(res.data.status=="OK"&&res.data.weather){
+                _this.cityId = value.id;
+                let key = 'cityId'+(window.localStorage.length-1);
+                window.localStorage.setItem(key,_this.cityId);
+                console.log(_this.cityId,res.data.weather);
+              }
+              else{
+                _this.$Message.error("抱歉,该城市"+res.data);
+              }
 
+            }
+          )
+
+        },
         beforeEnter: function (el) {
           el.style.opacity = 0;
           el.style.height = 0;

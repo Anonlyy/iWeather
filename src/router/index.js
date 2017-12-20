@@ -10,10 +10,6 @@ export default new Router({
   routes: [
     {
       path: '/',
-      redirect:'/add'
-    },
-    {
-      path: '/',
       name: 'index',
       component: Index
     },
