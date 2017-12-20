@@ -2,14 +2,30 @@
   <div id="app">
     <div class="search-header">
       <div class="search-bar">
-        <Input v-model="inputValue" autofocus placeholder="搜索城市"
+        <Input v-model.trim="inputValue" autofocus placeholder="搜索城市"
                icon="ios-search-strong"
                :maxlength="maxlength"
                class="search-input"
                ></Input>
       </div>
     </div>
-    <div class="search-body"></div>
+    <div class="search-body">
+      <div class="tip" v-if="searchResult.length <=0">
+        -- 抱歉,没有搜索到你需要的结果 --
+      </div>
+      <transition-group  class="list"
+        name="staggered-fade"
+        tag="ul"
+        v-bind:css="false"
+        v-on:before-enter="beforeEnter"
+        v-on:enter="enter"
+        v-on:leave="leave"
+      >
+        <li class="list-item" v-for="item in searchResult" :key="item.path">{{item.path}}</li>
+      </transition-group>
+
+
+    </div>
   </div>
 </template>
 
@@ -19,7 +35,9 @@
         data() {
             return {
               inputValue:'',
-              maxlength:20
+              maxlength:20,
+              searchResult:[],
+              isLoading:false
             }
         },
       watch:{
@@ -31,16 +49,48 @@
         searchCity:_.debounce(
           function (){
             const _this = this;
-            this.api.getCityId(this.inputValue).then(
+            _this.isLoading = true;
+            _this.searchResult = [];
+            _this.api.getCityId(_this.inputValue).then(
               res=>{
-                console.log(res.data.results);
+                if(res.data.results){
+                  _this.searchResult = res.data.results;
+                }
+                else{
+                  _this.searchResult = [];
+                }
               }
             ).catch(
               error=>{
                 console.log('获取cityId错误',error);
               }
             )
-          },500)
+          },500),
+
+        beforeEnter: function (el) {
+          el.style.opacity = 0;
+          el.style.height = 0;
+        },
+        enter: function (el, done) {
+          var delay = el.dataset.index;
+          setTimeout(function () {
+            Velocity(
+              el,
+              { opacity: 1,height:"2.5rem"},
+              { complete: done }
+            )
+          }, 10)
+        },
+        leave: function (el, done) {
+          let delay = el.dataset.index;
+          setTimeout(function () {
+            Velocity(
+              el,
+              { opacity: 0,height:0},
+              { complete: done }
+            )
+          }, 10)
+        }
       }
     }
 </script>
@@ -73,6 +123,26 @@
         }
       }
 
+    }
+    .search-body{
+      .list{
+        width: 100%;
+        .list-item{
+          display: flex;
+          height:2.5rem;
+          line-height:2.5rem;
+          padding-left:1rem;
+          align-items: center;
+          box-shadow: 0 5px 3px 0 rgba(0,0,0,.02);
+          border-bottom: 1px solid #eee;
+        }
+      }
+      .tip{
+        text-align: center;
+        height:4rem;
+        line-height:4rem;
+        color: #888;
+      }
     }
   }
 </style>
