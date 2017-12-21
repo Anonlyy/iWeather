@@ -4,7 +4,7 @@
     <swiper :options="swiperOption" :style="{height:innerHeight+'px'}" ref="mySwiper">
       <!-- slides -->
       <swiper-slide>
-        <div class="swiper-item ">
+        <div class="swiper-item current-item">
           <div class="swiper-header">
             <div class="header-tip">
               <p class="update-time">{{currentWeatherInfo.update_time | updateTime}} 更新</p>
@@ -65,10 +65,71 @@
           </div>
         </div>
       </swiper-slide>
-      <swiper-slide v-for="item in cityList">
+      <swiper-slide v-for="weatherItem in weatherInfoList">
         <div class="swiper-item normal-item">
-          {{item}}
+          <div class="swiper-header">
+            <div class="header-tip">
+              <p class="update-time">{{weatherItem.normalWeatherInfo.weather.update_time | updateTime}} 更新</p>
+              <span class="air-quality" v-text="'空气质量:'+weatherItem.normalWeatherInfo.weather.air_quality"> </span>
+            </div>
+            <div class="header-inner">
+              <i :class="'wi '+weatherItem.normalWeatherInfo.weather.code"></i>
+              <p class="weather-text" v-text="weatherItem.normalWeatherInfo.weather.text"></p>
+              <p class="weather-value" v-text="weatherItem.normalWeatherInfo.weather.high_low+' °C'"></p>
+            </div>
+            <div class="header-footer-list">
+              <div class="content">
+                <Icon type="thermometer" size="25"></Icon>
+                <div class="item-content">
+                  <p>当前温度</p>
+                  <p v-text="weatherItem.normalWeatherInfo.weatherNotice.temperature+' °C'"></p>
+                </div>
+              </div>
+              <div class="content">
+                <Icon type="nuclear" size="25"></Icon>
+                <div class="item-content">
+                  <p v-text="weatherItem.normalWeatherInfo.weatherNotice.wind_direction+'风'"></p>
+                  <p v-text="weatherItem.normalWeatherInfo.weatherNotice.wind_scale+'级'"></p>
+                </div>
+              </div>
+              <div class="content">
+                <Icon type="speedometer" size="25"></Icon>
+                <div class="item-content">
+                  <p>气压</p>
+                  <p v-text="weatherItem.normalWeatherInfo.weatherNotice.pressure+' hPa'"></p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <div class="swiper-content">
+            <div class="swiper-body">
+              <ul class="content-list">
+                <li class="list-item" v-for="(item,index) in weatherItem.normalWeatherInfo.futureWeatherList" v-if="index<=5">
+                  <span class="date">{{item.date.substring(5,7)}}/{{ item.date.substring(8,10)}}</span>
+                  <span class="day" v-text="item.day"></span>
+                  <span class="weather-text">
+                    <i :class="'wi '+item.code"></i>
+                    {{item.text}}
+                </span>
+                  <span class="weather-value" v-text="item.high_low+'°C'"></span>
+                </li>
+              </ul>
+              <div class="content-footer clearfix">
+                <div class="footer-item" v-for="item in weatherItem.normalWeatherInfo.todaySuggestionList">
+                  <span class="item-header">
+                    <Icon :type="item.icon" size="30"></Icon>
+                  </span>
+                  <span class="item-footer" v-text="item.content"></span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+
         </div>
+
       </swiper-slide>
       <!-- Optional controls -->
       <div class="swiper-pagination"  slot="pagination"></div>
@@ -124,19 +185,25 @@
                   dynamicBullets: true
                 },
                 on: {
-                  slideChangeTransitionEnd:function (event) {
-                    _this.getWeatherInfo(this.activeIndex);
+                  slideChangeTransitionStart:function () {
+                    if(this.activeIndex>=0){
+                      _this.isLoading = true;
+                    }
+                  },
+                  slideChangeTransitionEnd:function () {
+                    if(this.activeIndex===0){
+                      console.log('回到首页')
+                    }
+                    else if(this.activeIndex>=0){
+                      _this.getWeatherInfo(this.activeIndex);
+                    }
+
                   }
                 },
               },
-              cityList:[]
+              weatherInfoList:[],
             }
         },
-      computed:{
-        swiper() {
-          return this.$refs.mySwiper.swiper
-        }
-      },
         created(){
           const _this = this;
           _this.api.getCurrentWeatherInfo().then(
@@ -144,7 +211,7 @@
               _this.cityName = res.data.weather[0].city_name;
               let data = res.data.weather[0];
               let suggest = data.today.suggestion;
-              _this.currentWeatherInfo = new WeatherInfo(data.city_id,data.city_name,data.now.text,data.last_update,_this.api.getCodeIcon(data.now.code).iconName,data.now.air_quality.city.quality,data.future[0].low+'~'+data.future[0].high)
+              _this.currentWeatherInfo = new WeatherInfo(data.city_id,data.city_name,data.now.text,data.last_update,_this.api.getCodeIcon(data.now.code).iconName,data.now.air_quality.city.quality,data.future[0].low+' ~ '+data.future[0].high)
               _this.weatherNotice = new WeatherNotice(data.now.temperature,data.now.wind_direction,data.now.wind_scale,data.now.pressure);
               _this.todaySuggestion = new TodaySuggestion(suggest.dressing.brief,suggest.uv.brief,suggest.car_washing.brief,suggest.travel.brief,suggest.flu.brief,suggest.sport.brief);
               let i=0;
@@ -153,15 +220,51 @@
                 i++;
               }
               for(let item of data.future){
-                _this.futureWeatherInfo = new FutureWeatherInfo(item.date,item.low+'~'+item.high,item.day,item.text,_this.api.getCodeIcon(item.code1).iconName);
+                _this.futureWeatherInfo = new FutureWeatherInfo(item.date,item.low+' ~ '+item.high,item.day,item.text,_this.api.getCodeIcon(item.code1).iconName);
                 _this.futureWeatherList.push(_this.futureWeatherInfo);
               }
               _this.isLoading = false;
-              console.log(_this.todaySuggestionList);
+//              console.log(_this.todaySuggestionList);
             }
           );
-          for(let i =0;i<window.localStorage.length-1;i++){
-            _this.cityList.push(window.localStorage.getItem(window.localStorage.key(i)));
+
+          for(let i = 0;i<window.localStorage.length-1;i++){
+            _this.weatherInfoList.push({
+              "cityId":window.localStorage.getItem(window.localStorage.key(i)),
+              "normalWeatherInfo":{
+                "weather":new WeatherInfo('null','null','null','null','null','null','null'), //当天天气信息
+                "weatherNotice":new WeatherNotice('xx','xx','xx','xx'),   //天气提示
+                "futureWeatherInfo":new FutureWeatherInfo('xx','xx','xx','xx','xx'), //未来天气信息
+                "todaySuggestion":new TodaySuggestion('xx','xx','xx','xx','xx','xx'),
+                "futureWeatherList":[],
+                "todaySuggestionList":[
+                  {
+                    icon:'tshirt',
+                    content:''
+                  },
+                  {
+                    icon:'umbrella',
+                    content:''
+                  },
+                  {
+                    icon:'android-car',
+                    content:''
+                  },
+                  {
+                    icon:'plane',
+                    content:''
+                  },
+                  {
+                    icon:'ios-medical-outline',
+                    content:''
+                  },
+                  {
+                    icon:'ios-basketball-outline',
+                    content:''
+                  }
+                ],
+              }
+            });
           }
         },
         filters:{
@@ -174,9 +277,49 @@
         },
         methods:{
           getWeatherInfo(key){
-            console.log(key)
-          }
-        }
+            const  _this = this;
+            let cityId = _this.weatherInfoList[parseInt(key)-1].cityId;
+            if(_this.$cookies.isKey(cityId)){
+              let item = _this.weatherInfoList.find((value)=>{
+                return value.cityId == cityId;
+              });
+              item.normalWeatherInfo = JSON.parse(_this.$cookies.get(cityId)).normalWeatherInfo;
+
+              console.log(item);
+            }
+            else{
+              _this.api.getWeatherInfo(cityId).then(
+                res=>{
+                  _this.cityName = res.data.weather[0].city_name;
+                  let data = res.data.weather[0];
+                  let suggest = data.today.suggestion;
+                  let currentWeather = _this.weatherInfoList[parseInt(key)-1].normalWeatherInfo;
+                  currentWeather.weather = new WeatherInfo(data.city_id,data.city_name,data.now.text,data.last_update,_this.api.getCodeIcon(data.now.code).iconName,data.now.air_quality.city.quality,data.future[0].low+' ~ '+data.future[0].high)
+                  currentWeather.weatherNotice = new WeatherNotice(data.now.temperature,data.now.wind_direction,data.now.wind_scale,data.now.pressure);
+                  currentWeather.todaySuggestion = new TodaySuggestion(suggest.dressing.brief,suggest.uv.brief,suggest.car_washing.brief,suggest.travel.brief,suggest.flu.brief,suggest.sport.brief);
+                  let i=0;
+                  for(let item in currentWeather.todaySuggestion){
+                    currentWeather.todaySuggestionList[i].content = currentWeather.todaySuggestion[item];
+                    i++;
+                  }
+                  for(let item of data.future){
+                    currentWeather.futureWeatherInfo = new FutureWeatherInfo(item.date,item.low+' ~ '+item.high,item.day,item.text,_this.api.getCodeIcon(item.code1).iconName);
+                    currentWeather.futureWeatherList.push(currentWeather.futureWeatherInfo);
+                  }
+                  //set Cookie(12hours)
+                  _this.$cookies.set(cityId,JSON.stringify(_this.weatherInfoList[parseInt(key)-1],60 * 60 * 12));
+                }
+              ).catch(
+                error=>{
+                  _this.$Message.error('获取城市天气错误'+error);
+                }
+              );
+            }
+            _this.isLoading = false;
+          },
+        },
+
+
     }
 </script>
 
@@ -315,7 +458,7 @@
     }
   }
   .normal-item{
-    padding-top:3.4rem;
+    /*padding-top:3.4rem;*/
   }
 </style>
 

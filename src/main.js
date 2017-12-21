@@ -5,6 +5,7 @@ import App from './App'
 import router from './router'
 import api from './api/getData'
 import VueAwesomeSwiper from 'vue-awesome-swiper'
+import VueCookies from 'vue-cookies'
 
 // require styles
 import 'swiper/dist/css/swiper.css';
@@ -15,7 +16,7 @@ import "./assets/weather-icons.min.css";
 import { Button, Icon,Spin,Input,Message } from 'iview';
 import 'iview/dist/styles/iview.css';
 Vue.use(VueAwesomeSwiper, /* { default global options } */)
-
+Vue.use(VueCookies);
 
 Vue.component('Button', Button);
 Vue.component('Icon', Icon);
