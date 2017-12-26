@@ -288,12 +288,12 @@
                 return value.cityId == cityId;
               });
               item.normalWeatherInfo = JSON.parse(_this.$cookies.get(cityId)).normalWeatherInfo;
-              Bus.$emit('cityName',item.normalWeatherInfo.weather.city_name)
+
             }
             else{
               _this.api.getWeatherInfo(cityId).then(
                 res=>{
-                  _this.cityName = res.data.weather[0].city_name;
+//                  _this.cityName = res.data.weather[0].city_name;
                   let data = res.data.weather[0];
                   let suggest = data.today.suggestion;
                   let currentWeather = _this.weatherInfoList[parseInt(key)-1].normalWeatherInfo;
@@ -318,6 +318,8 @@
                 }
               );
             }
+            console.log();
+            Bus.$emit('cityName',_this.weatherInfoList[parseInt(key)-1].normalWeatherInfo.weather.city_name)
             _this.isLoading = false;
           },
         },

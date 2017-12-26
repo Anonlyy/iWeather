@@ -6,7 +6,7 @@ import router from './router'
 import api from './api/getData'
 import VueAwesomeSwiper from 'vue-awesome-swiper'
 import VueCookies from 'vue-cookies'
-
+import "babel-polyfill";
 // require styles
 import 'swiper/dist/css/swiper.css';
 //weather Icon

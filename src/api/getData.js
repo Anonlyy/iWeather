@@ -187,7 +187,12 @@ export default ({
   getCurrentWeatherInfo(){
     return axios.get(`https://weixin.jirengu.com/weather`)
   },
-
+  getSingleCurrentWeatherInfo(){
+    return axios.get(`https://weixin.jirengu.com/weather`).then(res=>res.data);
+  },
+  getSingleWeatherInfo(cityId){
+    return axios.get(`https://weixin.jirengu.com/weather/now?cityid=${cityId}`).then(res=>res.data);
+  },
   /**
    * 获取天气code码
    * @param code
