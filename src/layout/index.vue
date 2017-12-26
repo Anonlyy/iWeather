@@ -357,6 +357,8 @@
           margin:.5rem 0;
           display: inline-block;
           padding:.2rem .4rem;
+          max-width: 7rem;
+          text-align: left;
           border:1px solid white;
           border-radius: .3rem;
         }

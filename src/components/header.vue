@@ -7,8 +7,9 @@
       <Icon type="location" size="20"></Icon>
       <span class="location-name" v-text="cityName"></span>
     </div>
-    <div class="header-right" @click="toAdd">
-      <Icon type="ios-gear-outline" size="22"></Icon>
+    <div class="header-right" @click="toEdit">
+      <!--<Icon type="plus-round" size="22" @click="toAdd"></Icon>-->
+      <Icon type="edit" size="22" ></Icon>
     </div>
   </div>
 </template>
@@ -19,7 +20,8 @@
         name: 'header',
         data() {
             return {
-              cityName:''
+              cityName:'',
+              isEdit:false
             }
         },
         methods:{
@@ -30,7 +32,13 @@
             this.$router.push('/');
           },
           toAdd(){
-            this.$router.push('/add');
+
+          },
+          toEdit(){
+            this.isEdit = !this.isEdit;
+            Bus.$emit('editStart',this.isEdit);
+//            this.$router.push('/add');
+
           }
         },
         created() {

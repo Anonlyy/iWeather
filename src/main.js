@@ -13,7 +13,7 @@ import 'swiper/dist/css/swiper.css';
 import "./assets/weather-icons.min.css";
 
 //iview
-import { Button, Icon,Spin,Input,Message } from 'iview';
+import { Button, Icon,Spin,Input,Message,Modal } from 'iview';
 import 'iview/dist/styles/iview.css';
 Vue.use(VueAwesomeSwiper, /* { default global options } */)
 Vue.use(VueCookies);
@@ -22,6 +22,7 @@ Vue.component('Button', Button);
 Vue.component('Icon', Icon);
 Vue.component('Spin', Spin);
 Vue.component('Input', Input);
+Vue.component('Modal', Modal);
 Vue.prototype.api = api;
 Vue.prototype.$Message = Message;
 
