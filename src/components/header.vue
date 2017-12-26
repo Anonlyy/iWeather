@@ -5,7 +5,7 @@
     </div>
     <div class="header-center" @click="toIndex">
       <Icon type="location" size="20"></Icon>
-      <span class="location-name">东莞</span>
+      <span class="location-name" v-text="cityName"></span>
     </div>
     <div class="header-right" @click="toAdd">
       <Icon type="ios-gear-outline" size="22"></Icon>
@@ -14,10 +14,13 @@
 </template>
 
 <script>
+  import Bus from '../router/eventBus.js';
     export default {
         name: 'header',
         data() {
-            return {}
+            return {
+              cityName:''
+            }
         },
         methods:{
           toList(){
@@ -29,7 +32,12 @@
           toAdd(){
             this.$router.push('/add');
           }
-        }
+        },
+        created() {
+          Bus.$on('cityName', value => {
+            this.cityName = value;
+          })
+        },
     }
 </script>
 

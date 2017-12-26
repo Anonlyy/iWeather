@@ -65,7 +65,7 @@
           </div>
         </div>
       </swiper-slide>
-      <swiper-slide v-for="weatherItem in weatherInfoList">
+      <swiper-slide v-for="weatherItem in weatherInfoList" :key="weatherItem.cityId">
         <div class="swiper-item normal-item">
           <div class="swiper-header">
             <div class="header-tip">
@@ -129,7 +129,6 @@
 
 
         </div>
-
       </swiper-slide>
       <!-- Optional controls -->
       <div class="swiper-pagination"  slot="pagination"></div>
@@ -138,6 +137,7 @@
 </template>
 
 <script>
+  import Bus from '../router/eventBus.js';
   import {WeatherInfo,WeatherNotice,FutureWeatherInfo,TodaySuggestion} from '../api/class'
     export default {
         name: 'index',
@@ -192,7 +192,9 @@
                   },
                   slideChangeTransitionEnd:function () {
                     if(this.activeIndex===0){
-                      console.log('回到首页')
+                      console.log('回到首页',_this.cityName);
+                      _this.isLoading = false;
+                      Bus.$emit('cityName',_this.cityName);
                     }
                     else if(this.activeIndex>=0){
                       _this.getWeatherInfo(this.activeIndex);
@@ -209,6 +211,7 @@
           _this.api.getCurrentWeatherInfo().then(
             res=>{
               _this.cityName = res.data.weather[0].city_name;
+              Bus.$emit('cityName',_this.cityName);
               let data = res.data.weather[0];
               let suggest = data.today.suggestion;
               _this.currentWeatherInfo = new WeatherInfo(data.city_id,data.city_name,data.now.text,data.last_update,_this.api.getCodeIcon(data.now.code).iconName,data.now.air_quality.city.quality,data.future[0].low+' ~ '+data.future[0].high)
@@ -224,7 +227,6 @@
                 _this.futureWeatherList.push(_this.futureWeatherInfo);
               }
               _this.isLoading = false;
-//              console.log(_this.todaySuggestionList);
             }
           );
 
@@ -266,6 +268,8 @@
               }
             });
           }
+
+
         },
         filters:{
           updateTime(value){
@@ -284,8 +288,7 @@
                 return value.cityId == cityId;
               });
               item.normalWeatherInfo = JSON.parse(_this.$cookies.get(cityId)).normalWeatherInfo;
-
-              console.log(item);
+              Bus.$emit('cityName',item.normalWeatherInfo.weather.city_name)
             }
             else{
               _this.api.getWeatherInfo(cityId).then(
