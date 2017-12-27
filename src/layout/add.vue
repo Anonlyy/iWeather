@@ -44,11 +44,6 @@
           }
         },
         mounted(){
-//          window.localStorage.clear();
-          console.log(window.localStorage);
-//          for(var i=0; i<window.localStorage.length;i++){
-//            console.log('localStorage里存储的第'+i+'条数据的名字为：'+window.localStorage.key(i)+',值为：'+window.localStorage.getItem(window.localStorage.key(i)));
-//          }
         },
         methods:{
         searchCity:_.debounce(

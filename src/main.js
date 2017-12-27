@@ -4,6 +4,7 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import api from './api/getData'
+import vuex from 'vuex'
 import VueAwesomeSwiper from 'vue-awesome-swiper'
 import VueCookies from 'vue-cookies'
 import "babel-polyfill";
@@ -17,6 +18,7 @@ import { Button, Icon,Spin,Input,Message,Modal } from 'iview';
 import 'iview/dist/styles/iview.css';
 Vue.use(VueAwesomeSwiper, /* { default global options } */)
 Vue.use(VueCookies);
+Vue.use(vuex);
 
 Vue.component('Button', Button);
 Vue.component('Icon', Icon);

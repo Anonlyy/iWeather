@@ -57,12 +57,13 @@
       _this.awaitGetWeatherInfo();
       Bus.$on('editStart', value => {
         _this.isEdit = value;
-      })
+      });
     },
     methods: {
       async awaitGetWeatherInfo() {
         const _this = this;
         try {
+          _this.weatherInfoList = [];
           //获取当前城市天气信息
           let currentRes = await _this.api.getSingleCurrentWeatherInfo();
           let currentData = currentRes.weather[0];
@@ -70,7 +71,7 @@
           _this.weatherInfoList.push(_this.currentWeatherInfo);
 
           //获取添加的城市天气信息
-          console.log(window.localStorage.key(0));
+          _this.cityIdList = [];
           for (let i = 0; i < window.localStorage.length - 1; i++) {
             _this.cityIdList.push({
               key:window.localStorage.key(i),
@@ -84,6 +85,7 @@
             _this.weatherInfoList.push(_this.currentWeatherInfo);
           }
           _this.isLoading = false;
+//          console.log(_this.weatherInfoList);
         } catch (error) {
           _this.$Message.error('获取天气列表出错' + error);
         }
@@ -92,11 +94,20 @@
         if(index===0){this.$Message.warning('默认城市无法删除');return}
         this.isModalShow = true;
         this.deleteKey = this.cityIdList[parseInt(index)-1].key;
+        console.log(this.deleteKey);
       },
       handleDeleteCity (key) {
-        console.log(key);
+        let index = this.cityIdList.findIndex((item)=>{
+          return item.key == key;
+        });
+        //idList没有包含默认城市
+        this.cityIdList.splice(index,1);
+        //weatherInfoList包含默认城市
+        this.weatherInfoList.splice(index+1,1);
         window.localStorage.removeItem(key);
+
       },
+
     }
   }
 </script>
