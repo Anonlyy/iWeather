@@ -8,8 +8,9 @@
       <span class="location-name" v-text="cityName"></span>
     </div>
     <div class="header-right" @click="toEdit">
-      <!--<Icon type="plus-round" size="22" @click="toAdd"></Icon>-->
-      <Icon type="edit" size="22" ></Icon>
+
+      <Icon type="plus-round" v-if="!isEdit" size="22"></Icon>
+      <Icon type="edit" v-else size="22" ></Icon>
     </div>
   </div>
 </template>
@@ -31,9 +32,6 @@
           toIndex(){
             this.$router.push('/');
           },
-          toAdd(){
-
-          },
           toEdit(){
             this.isEdit = !this.isEdit;
             Bus.$emit('editStart',this.isEdit);
@@ -44,6 +42,10 @@
         created() {
           Bus.$on('cityName', value => {
             this.cityName = value;
+          })
+
+          Bus.$on('edit', value => {
+            console.log(value)
           })
         },
     }
