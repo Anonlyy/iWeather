@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <app-header></app-header>
-    <router-view/>
+    <router-view class="router-view"/>
   </div>
 </template>
 
@@ -21,8 +21,9 @@ export default {
     height: 100%;
     max-width: 768px;
     background-color: rgba(0,0,0,0);
-    position: absolute;
+    position: relative;
     z-index: 100;
+    overflow: hidden;
   }
   * {
     font-weight: 400;
@@ -61,5 +62,10 @@ export default {
     html {
       font-size: 13px;
     }
+  }
+  .router-view{
+    /*position: absolute;*/
+    /*z-index: 1000;*/
+    min-height:100vh;
   }
 </style>

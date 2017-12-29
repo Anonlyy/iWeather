@@ -115,6 +115,7 @@
 <style lang="scss" rel="stylesheet/scss" scoped>
   #app {
     padding-top: 4.5rem;
+    background-color:white;
     .app-content {
       .city-list {
         display: block;

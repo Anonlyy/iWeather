@@ -33,9 +33,13 @@
             this.$router.push('/');
           },
           toEdit(){
-            this.isEdit = !this.isEdit;
-            Bus.$emit('editStart',this.isEdit);
-//            this.$router.push('/add');
+            if(this.isEdit){
+              Bus.$emit('editStart',this.isEdit);
+            }
+            else{
+              this.$router.push('/add');
+            }
+
 
           }
         },
@@ -44,8 +48,8 @@
             this.cityName = value;
           })
 
-          Bus.$on('edit', value => {
-            console.log(value)
+          Bus.$on('isEdit', value => {
+            this.isEdit = value;
           })
         },
     }

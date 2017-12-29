@@ -17,15 +17,6 @@ export const router =  new Router({
       path: '/list',
       name: 'list',
       component: List,
-      beforeEnter:(to, from, next) => {
-        // ...
-        console.log(to);
-        if(to.name=="list"){
-          console.log('编辑模式');
-          Bus.$emit('edit',111);
-        }
-        next();
-      }
     },
     {
       path: '/add',
@@ -33,7 +24,16 @@ export const router =  new Router({
       component: Add
     }
   ],
-
 })
 
 
+router.beforeEach((to, from, next) => {
+    // ...
+    if(to.name=="list"){
+      Bus.$emit('isEdit',true);
+    }
+    if(from.name=="list"){
+      Bus.$emit('isEdit',false);
+    }
+    next();
+})

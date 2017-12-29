@@ -114,6 +114,7 @@
 
 <style lang="scss" rel="stylesheet/scss" scoped>
   #app{
+    background-color: white;
     padding-top:3.4rem;
     .search-header{
       .search-bar{
