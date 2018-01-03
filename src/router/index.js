@@ -10,6 +10,10 @@ export const router =  new Router({
   routes: [
     {
       path: '/',
+      redirect:'/index'
+    },
+    {
+      path: '/index',
       name: 'index',
       component: Index
     },
@@ -30,10 +34,10 @@ export const router =  new Router({
 router.beforeEach((to, from, next) => {
     // ...
     if(to.name=="list"){
-      Bus.$emit('isEdit',true);
+      Bus.$emit('isEdit',1);
     }
     if(from.name=="list"){
-      Bus.$emit('isEdit',false);
+      Bus.$emit('isEdit',-1);
     }
     next();
 })

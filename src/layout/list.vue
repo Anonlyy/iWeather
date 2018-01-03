@@ -12,13 +12,15 @@
               {{item.high_low}} °C
             </div>
           </div>
-          <span class="btn-delete" :class="isEdit?'isShow':''" @click="cityDelete(index)">
+          <span class="btn-delete" :class="isEdit===1?'isShow':''" @click="cityDelete(index)">
               <Icon type="minus" color="white" size="12"></Icon>
             </span>
         </li>
         <li class="city-item add-item">
           <div class="list-item">
-            <Icon type="ios-plus-empty"></Icon>
+            <router-link :to="{path:'add'}" style="display: block;">
+              <Icon type="ios-plus-empty"></Icon>
+            </router-link>
           </div>
         </li>
       </ul>
@@ -47,7 +49,7 @@
         currentWeatherInfo: new WeatherInfo('null', 'null', 'null', 'null', 'null', 'null', 'null'), //当天天气信息
         weatherInfoList: [],
         isShow:false,
-        isEdit:false,
+        isEdit:-1,
         isModalShow:false,
         deleteKey:''
       }
@@ -175,10 +177,16 @@
         .add-item {
           .list-item {
             justify-content: center;
-            > i {
-              font-size: 2rem;
-              color: rgba(40, 172, 160, 1);
+            a{
+              width: 100%;
+              display: block;
+              text-align: center;
+              > i {
+                font-size: 2rem;
+                color: rgba(40, 172, 160, 1);
+              }
             }
+
           }
 
         }

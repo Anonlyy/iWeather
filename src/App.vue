@@ -63,9 +63,10 @@ export default {
       font-size: 13px;
     }
   }
-  .router-view{
-    /*position: absolute;*/
-    /*z-index: 1000;*/
-    min-height:100vh;
+  .text-truncate {
+    word-wrap: normal; /* for IE */
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
   }
 </style>

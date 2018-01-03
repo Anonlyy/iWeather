@@ -1,5 +1,7 @@
 <template>
   <div class="app-container">
+    <pull-to :top-load-method="refresh">
+
     <Spin size="large" fix v-if="isLoading"></Spin>
     <swiper :options="swiperOption" :style="{height:innerHeight+'px'}" ref="mySwiper">
       <!-- slides -->
@@ -45,7 +47,7 @@
                 <li class="list-item" v-for="item,index in futureWeatherList" v-if="index<=5">
                   <span class="date">{{item.date.substring(5,7)}}/{{ item.date.substring(8,10)}}</span>
                   <span class="day" v-text="item.day"></span>
-                  <span class="weather-text">
+                  <span class="weather-text ">
                     <i :class="'wi '+item.code"></i>
                     {{item.text}}
                 </span>
@@ -133,11 +135,13 @@
       <!-- Optional controls -->
       <div class="swiper-pagination"  slot="pagination"></div>
     </swiper>
+    </pull-to>
   </div>
 </template>
 
 <script>
   import Bus from '../router/eventBus.js';
+  import PullTo from 'vue-pull-to';
   import {WeatherInfo,WeatherNotice,FutureWeatherInfo,TodaySuggestion} from '../api/class'
     export default {
         name: 'index',
@@ -205,6 +209,9 @@
               },
               weatherInfoList:[],
             }
+        },
+        components: {
+          PullTo
         },
         created(){
           const _this = this;
@@ -322,6 +329,9 @@
             Bus.$emit('cityName',_this.weatherInfoList[parseInt(key)-1].normalWeatherInfo.weather.city_name)
             _this.isLoading = false;
           },
+          refresh(){
+            console.log(111);
+          }
         },
 
 
@@ -364,16 +374,16 @@
         }
       }
       .header-inner{
-        padding-top:2rem;
+        padding-top:1.6rem;
         >i{
           font-size: 5rem;
         }
         .weather-text{
           font-size: 1rem;
-          margin:.2rem 0;
+          margin:1.2rem 0 .2rem;
         }
         .weather-value{
-          font-size: 1.5rem;
+          font-size: 1.3rem;
         }
       }
       .header-footer-list{
@@ -435,6 +445,10 @@
             }
             >.weather-text{
               width: 35%;
+              word-wrap: normal; /* for IE */
+              text-overflow: ellipsis;
+              white-space: nowrap;
+              overflow: hidden;
               >i{
                 font-size: 1.2rem;
                 display: inline-block;

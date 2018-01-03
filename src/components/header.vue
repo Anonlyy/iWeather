@@ -8,8 +8,7 @@
       <span class="location-name" v-text="cityName"></span>
     </div>
     <div class="header-right" @click="toEdit">
-
-      <Icon type="plus-round" v-if="!isEdit" size="22"></Icon>
+      <Icon type="plus-round" v-if="isEdit===-1" size="22"></Icon>
       <Icon type="edit" v-else size="22" ></Icon>
     </div>
   </div>
@@ -22,7 +21,7 @@
         data() {
             return {
               cityName:'',
-              isEdit:false
+              isEdit:-1
             }
         },
         methods:{
@@ -30,11 +29,16 @@
             this.$router.push('/list');
           },
           toIndex(){
-            this.$router.push('/');
+            this.$router.push('/index');
           },
           toEdit(){
-            if(this.isEdit){
+            if(this.isEdit === 1){
               Bus.$emit('editStart',this.isEdit);
+              this.isEdit = 2;
+            }
+            else if(this.isEdit === 2){
+              Bus.$emit('editStart',this.isEdit);
+              this.isEdit = 1;
             }
             else{
               this.$router.push('/add');
