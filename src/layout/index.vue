@@ -1,7 +1,5 @@
 <template>
   <div class="app-container">
-    <pull-to :top-load-method="refresh">
-
     <Spin size="large" fix v-if="isLoading"></Spin>
     <swiper :options="swiperOption" :style="{height:innerHeight+'px'}" ref="mySwiper">
       <!-- slides -->
@@ -135,13 +133,11 @@
       <!-- Optional controls -->
       <div class="swiper-pagination"  slot="pagination"></div>
     </swiper>
-    </pull-to>
   </div>
 </template>
 
 <script>
   import Bus from '../router/eventBus.js';
-  import PullTo from 'vue-pull-to';
   import {WeatherInfo,WeatherNotice,FutureWeatherInfo,TodaySuggestion} from '../api/class'
     export default {
         name: 'index',
@@ -184,6 +180,7 @@
               ],
               isLoading:true,
               swiperOption: {
+                initialSlide : 0,
                 pagination: {
                   el: '.swiper-pagination',
                   dynamicBullets: true
@@ -210,33 +207,14 @@
               weatherInfoList:[],
             }
         },
-        components: {
-          PullTo
-        },
         created(){
           const _this = this;
-          _this.api.getCurrentWeatherInfo().then(
-            res=>{
-              _this.cityName = res.data.weather[0].city_name;
-              Bus.$emit('cityName',_this.cityName);
-              let data = res.data.weather[0];
-              let suggest = data.today.suggestion;
-              _this.currentWeatherInfo = new WeatherInfo(data.city_id,data.city_name,data.now.text,data.last_update,_this.api.getCodeIcon(data.now.code).iconName,data.now.air_quality.city.quality,data.future[0].low+' ~ '+data.future[0].high)
-              _this.weatherNotice = new WeatherNotice(data.now.temperature,data.now.wind_direction,data.now.wind_scale,data.now.pressure);
-              _this.todaySuggestion = new TodaySuggestion(suggest.dressing.brief,suggest.uv.brief,suggest.car_washing.brief,suggest.travel.brief,suggest.flu.brief,suggest.sport.brief);
-              let i=0;
-              for(let item in _this.todaySuggestion){
-                _this.todaySuggestionList[i].content = _this.todaySuggestion[item];
-                i++;
-              }
-              for(let item of data.future){
-                _this.futureWeatherInfo = new FutureWeatherInfo(item.date,item.low+' ~ '+item.high,item.day,item.text,_this.api.getCodeIcon(item.code1).iconName);
-                _this.futureWeatherList.push(_this.futureWeatherInfo);
-              }
-              _this.isLoading = false;
-            }
-          );
-
+          if(parseInt(_this.$route.params.index)>0){
+            _this.swiperOption.initialSlide = _this.$route.params.index;
+          }
+          else{
+            _this.getFirstWeatherInfo();
+          }
           for(let i = 0;i<window.localStorage.length-1;i++){
             _this.weatherInfoList.push({
               "cityId":window.localStorage.getItem(window.localStorage.key(i)),
@@ -275,8 +253,6 @@
               }
             });
           }
-
-
         },
         filters:{
           updateTime(value){
@@ -287,6 +263,34 @@
           this.innerHeight = window.innerHeight;
         },
         methods:{
+          getFirstWeatherInfo(){
+            const _this = this;
+            _this.api.getCurrentWeatherInfo().then(
+              res=>{
+                _this.cityName = res.data.weather[0].city_name;
+                Bus.$emit('cityName',_this.cityName);
+                let data = res.data.weather[0];
+                let suggest = data.today.suggestion;
+                _this.currentWeatherInfo = new WeatherInfo(data.city_id,data.city_name,data.now.text,data.last_update,_this.api.getCodeIcon(data.now.code).iconName,data.now.air_quality.city.quality,data.future[0].low+' ~ '+data.future[0].high)
+                _this.weatherNotice = new WeatherNotice(data.now.temperature,data.now.wind_direction,data.now.wind_scale,data.now.pressure);
+                _this.todaySuggestion = new TodaySuggestion(suggest.dressing.brief,suggest.uv.brief,suggest.car_washing.brief,suggest.travel.brief,suggest.flu.brief,suggest.sport.brief);
+                let i=0;
+                for(let item in _this.todaySuggestion){
+                  _this.todaySuggestionList[i].content = _this.todaySuggestion[item];
+                  i++;
+                }
+                for(let item of data.future){
+                  _this.futureWeatherInfo = new FutureWeatherInfo(item.date,item.low+' ~ '+item.high,item.day,item.text,_this.api.getCodeIcon(item.code1).iconName);
+                  _this.futureWeatherList.push(_this.futureWeatherInfo);
+                }
+                _this.isLoading = false;
+              }
+            ).catch(
+              error=>{
+                _this.$Message.error('获取当前天气信息错误'+error);
+              }
+            )
+          },
           getWeatherInfo(key){
             const  _this = this;
             let cityId = _this.weatherInfoList[parseInt(key)-1].cityId;
@@ -329,9 +333,6 @@
             Bus.$emit('cityName',_this.weatherInfoList[parseInt(key)-1].normalWeatherInfo.weather.city_name)
             _this.isLoading = false;
           },
-          refresh(){
-            console.log(111);
-          }
         },
 
 
@@ -340,12 +341,20 @@
 
 <style lang="scss" rel="stylesheet/scss">
   .app-container{
+
+  }
+  .top-load-wrapper{
+    text-align: center;
+    font-size: .8rem;
+    height:2rem;
+    line-height:2rem;
   }
   .swiper-item{
+    padding-top:3.4rem;
     height:100%;
     color: #23ADA1;
     .swiper-header{
-      padding-top:3.4rem;
+      /*margin-top:3.4rem;*/
       position: relative;
       color: white;
       text-align: center;
@@ -424,7 +433,7 @@
       background-color: white;
       padding-top:.5rem;
       .swiper-body{
-        margin-bottom: 115px;
+        margin-bottom: 85px;
         .content-list{
           width: 100%;
           .list-item{
@@ -477,9 +486,6 @@
         }
       }
     }
-  }
-  .normal-item{
-    /*padding-top:3.4rem;*/
   }
 </style>
 

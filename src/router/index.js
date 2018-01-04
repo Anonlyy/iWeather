@@ -32,7 +32,6 @@ export const router =  new Router({
 
 
 router.beforeEach((to, from, next) => {
-    // ...
     if(to.name=="list"){
       Bus.$emit('isEdit',1);
     }

@@ -4,7 +4,7 @@
 
     <div class="app-content">
       <ul class="city-list clearfix">
-        <li class="city-item" v-for="(item,index) in weatherInfoList" >
+        <li class="city-item" v-for="(item,index) in weatherInfoList" @click="toIndex(index)">
           <div class="list-item">
             <span class="city-name" v-text="item.city_name"></span>
             <div class="weather-value">
@@ -49,13 +49,17 @@
         currentWeatherInfo: new WeatherInfo('null', 'null', 'null', 'null', 'null', 'null', 'null'), //当天天气信息
         weatherInfoList: [],
         isShow:false,
-        isEdit:-1,
+        isEdit:-2,
         isModalShow:false,
         deleteKey:''
       }
     },
     created() {
       const _this = this;
+      //如果在list刷新页面,直接跳转到首页
+      if(_this.$route.params.type!=='list'){
+        _this.$router.replace('/index');
+      }
       _this.awaitGetWeatherInfo();
       Bus.$on('editStart', value => {
         _this.isEdit = value;
@@ -107,9 +111,11 @@
         //weatherInfoList包含默认城市
         this.weatherInfoList.splice(index+1,1);
         window.localStorage.removeItem(key);
-
       },
-
+      //跳转到首页
+      toIndex(index){
+        this.$router.push({name:'index',params:{index:index}});
+      }
     }
   }
 </script>

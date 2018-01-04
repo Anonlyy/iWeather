@@ -25,11 +25,10 @@ export default {
     z-index: 100;
     overflow: hidden;
   }
-  * {
+  *{
     font-weight: 400;
     box-sizing: border-box;
     font-size: 14px;
-
   }
   html, body {
     width: 100%;
@@ -46,7 +45,7 @@ export default {
     height: 0;
     clear: both;
   }
-  @media only screen {
+  @media only screen and (min-width: 480px){
     html {
       font-size: 30px;
     }
