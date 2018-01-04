@@ -39,7 +39,7 @@
             }
         },
         watch:{
-          inputValue(newValue){
+          inputValue(){
             this.searchCity();
           }
         },
@@ -71,10 +71,18 @@
           _this.api.getWeatherInfo(value.id).then(
             res=>{
               if(res.data.status=="OK"&&res.data.weather){
+                for (let i = 0; i < window.localStorage.length - 1; i++) {
+                  if(value.id == window.localStorage.getItem(window.localStorage.key(i))){
+                    _this.$Message.error('抱歉,该城市已添加过');
+                    return;
+                  }
+                }
                 _this.cityId = value.id;
                 let key = 'cityId'+(window.localStorage.length-1);
                 window.localStorage.setItem(key,_this.cityId);
-                console.log(_this.cityId,res.data.weather);
+
+
+                _this.$router.push({name:'index',params:{cityId:_this.cityId}});
               }
               else{
                 _this.$Message.error("抱歉,该城市"+res.data);
@@ -89,7 +97,6 @@
           el.style.height = 0;
         },
         enter: function (el, done) {
-          var delay = el.dataset.index;
           setTimeout(function () {
             Velocity(
               el,

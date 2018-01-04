@@ -147,6 +147,7 @@
               innerHeight:0,
               ListHeight:0,
               cityName:'东莞',
+              cityIdList: [],
               currentWeatherInfo:new WeatherInfo('null','null','null','null','null','null','null'), //当天天气信息
               weatherNotice:new WeatherNotice('xx','xx','xx','xx'),   //天气提示
               futureWeatherInfo:new FutureWeatherInfo('xx','xx','xx','xx','xx'), //未来天气信息
@@ -194,8 +195,7 @@
                   slideChangeTransitionEnd:function () {
                     if(this.activeIndex===0){
                       console.log('回到首页',_this.cityName);
-                      _this.isLoading = false;
-                      Bus.$emit('cityName',_this.cityName);
+                      _this.getFirstWeatherInfo()
                     }
                     else if(this.activeIndex>=0){
                       _this.getWeatherInfo(this.activeIndex);
@@ -209,13 +209,11 @@
         },
         created(){
           const _this = this;
-          if(parseInt(_this.$route.params.index)>0){
-            _this.swiperOption.initialSlide = _this.$route.params.index;
-          }
-          else{
-            _this.getFirstWeatherInfo();
-          }
-          for(let i = 0;i<window.localStorage.length-1;i++){
+          for (let i = 0; i < window.localStorage.length - 1; i++) {
+            _this.cityIdList.push({
+              key:window.localStorage.key(i),
+              value:window.localStorage.getItem(window.localStorage.key(i))
+            });
             _this.weatherInfoList.push({
               "cityId":window.localStorage.getItem(window.localStorage.key(i)),
               "normalWeatherInfo":{
@@ -253,6 +251,20 @@
               }
             });
           }
+          //获取add页面传值的cityId在localstorage中的Index
+          let index = _this.cityIdList.findIndex((item)=>{
+            return item.value == _this.$route.params.cityId;
+          })
+          console.log(index);
+          if(parseInt(index)>=0){
+            _this.swiperOption.initialSlide = index+1;
+//            _this.getWeatherInfo(index);
+          }
+          else{
+            _this.getFirstWeatherInfo();
+          }
+
+
         },
         filters:{
           updateTime(value){
@@ -265,31 +277,53 @@
         methods:{
           getFirstWeatherInfo(){
             const _this = this;
-            _this.api.getCurrentWeatherInfo().then(
-              res=>{
-                _this.cityName = res.data.weather[0].city_name;
-                Bus.$emit('cityName',_this.cityName);
-                let data = res.data.weather[0];
-                let suggest = data.today.suggestion;
-                _this.currentWeatherInfo = new WeatherInfo(data.city_id,data.city_name,data.now.text,data.last_update,_this.api.getCodeIcon(data.now.code).iconName,data.now.air_quality.city.quality,data.future[0].low+' ~ '+data.future[0].high)
-                _this.weatherNotice = new WeatherNotice(data.now.temperature,data.now.wind_direction,data.now.wind_scale,data.now.pressure);
-                _this.todaySuggestion = new TodaySuggestion(suggest.dressing.brief,suggest.uv.brief,suggest.car_washing.brief,suggest.travel.brief,suggest.flu.brief,suggest.sport.brief);
-                let i=0;
-                for(let item in _this.todaySuggestion){
-                  _this.todaySuggestionList[i].content = _this.todaySuggestion[item];
-                  i++;
+            if(_this.$cookies.isKey('location')){
+              let  locationWeatherInfo = JSON.parse(_this.$cookies.get('location'));
+              _this.currentWeatherInfo = locationWeatherInfo.currentWeatherInfo;
+              _this.weatherNotice = locationWeatherInfo.weatherNotice;
+              _this.todaySuggestionList = locationWeatherInfo.todaySuggestionList;
+              _this.futureWeatherList = locationWeatherInfo.futureWeatherList;
+              _this.cityName = _this.currentWeatherInfo.city_name;
+//              Bus.$emit('cityName',_this.weatherInfoList[parseInt(key)-1].normalWeatherInfo.weather.city_name);
+            }
+            else{
+              _this.api.getCurrentWeatherInfo().then(
+                res=>{
+                  _this.cityName = res.data.weather[0].city_name;
+
+                  let data = res.data.weather[0];
+                  let suggest = data.today.suggestion;
+                  _this.currentWeatherInfo = new WeatherInfo(data.city_id,data.city_name,data.now.text,data.last_update,_this.api.getCodeIcon(data.now.code).iconName,data.now.air_quality.city.quality,data.future[0].low+' ~ '+data.future[0].high)
+                  _this.weatherNotice = new WeatherNotice(data.now.temperature,data.now.wind_direction,data.now.wind_scale,data.now.pressure);
+                  _this.todaySuggestion = new TodaySuggestion(suggest.dressing.brief,suggest.uv.brief,suggest.car_washing.brief,suggest.travel.brief,suggest.flu.brief,suggest.sport.brief);
+                  let i=0;
+                  for(let item in _this.todaySuggestion){
+                    _this.todaySuggestionList[i].content = _this.todaySuggestion[item];
+                    i++;
+                  }
+                  for(let item of data.future){
+                    _this.futureWeatherInfo = new FutureWeatherInfo(item.date,item.low+' ~ '+item.high,item.day,item.text,_this.api.getCodeIcon(item.code1).iconName);
+                    _this.futureWeatherList.push(_this.futureWeatherInfo);
+                  }
+
+
+                  let locationWeatherInfo = {
+                    currentWeatherInfo:_this.currentWeatherInfo,
+                    weatherNotice:_this.weatherNotice,
+                    todaySuggestionList:_this.todaySuggestionList,
+                    futureWeatherList:_this.futureWeatherList
+                  }
+                  _this.$cookies.set('location',JSON.stringify(locationWeatherInfo,60 * 60 * 12));
+
+
                 }
-                for(let item of data.future){
-                  _this.futureWeatherInfo = new FutureWeatherInfo(item.date,item.low+' ~ '+item.high,item.day,item.text,_this.api.getCodeIcon(item.code1).iconName);
-                  _this.futureWeatherList.push(_this.futureWeatherInfo);
-                }
-                _this.isLoading = false;
-              }
-            ).catch(
-              error=>{
-                _this.$Message.error('获取当前天气信息错误'+error);
-              }
-            )
+              ).catch(
+                error=>{
+                  _this.$Message.error('获取当前天气信息错误'+error);
+                });
+            }
+            Bus.$emit('cityName',_this.cityName);
+            _this.isLoading = false;
           },
           getWeatherInfo(key){
             const  _this = this;
@@ -299,12 +333,11 @@
                 return value.cityId == cityId;
               });
               item.normalWeatherInfo = JSON.parse(_this.$cookies.get(cityId)).normalWeatherInfo;
-
+              Bus.$emit('cityName',_this.weatherInfoList[parseInt(key)-1].normalWeatherInfo.weather.city_name);
             }
             else{
               _this.api.getWeatherInfo(cityId).then(
                 res=>{
-//                  _this.cityName = res.data.weather[0].city_name;
                   let data = res.data.weather[0];
                   let suggest = data.today.suggestion;
                   let currentWeather = _this.weatherInfoList[parseInt(key)-1].normalWeatherInfo;
@@ -322,15 +355,17 @@
                   }
                   //set Cookie(12hours)
                   _this.$cookies.set(cityId,JSON.stringify(_this.weatherInfoList[parseInt(key)-1],60 * 60 * 12));
+                  return _this.weatherInfoList[parseInt(key)-1].normalWeatherInfo.weather.city_name;
                 }
-              ).catch(
+              ).then(value=>{
+                console.log(value);
+                Bus.$emit('cityName',value);
+              }).catch(
                 error=>{
                   _this.$Message.error('获取城市天气错误'+error);
                 }
               );
             }
-            console.log();
-            Bus.$emit('cityName',_this.weatherInfoList[parseInt(key)-1].normalWeatherInfo.weather.city_name)
             _this.isLoading = false;
           },
         },
