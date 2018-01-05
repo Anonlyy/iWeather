@@ -255,10 +255,9 @@
           let index = _this.cityIdList.findIndex((item)=>{
             return item.value == _this.$route.params.cityId;
           })
-          console.log(index);
           if(parseInt(index)>=0){
+            _this.isLoading = true;
             _this.swiperOption.initialSlide = index+1;
-//            _this.getWeatherInfo(index);
           }
           else{
             _this.getFirstWeatherInfo();
@@ -284,7 +283,8 @@
               _this.todaySuggestionList = locationWeatherInfo.todaySuggestionList;
               _this.futureWeatherList = locationWeatherInfo.futureWeatherList;
               _this.cityName = _this.currentWeatherInfo.city_name;
-//              Bus.$emit('cityName',_this.weatherInfoList[parseInt(key)-1].normalWeatherInfo.weather.city_name);
+              _this.isLoading = false;
+//              Bus.$emit('cityName',_this.cityName);
             }
             else{
               _this.api.getCurrentWeatherInfo().then(
@@ -314,7 +314,7 @@
                     futureWeatherList:_this.futureWeatherList
                   }
                   _this.$cookies.set('location',JSON.stringify(locationWeatherInfo,60 * 60 * 12));
-
+                  _this.isLoading = false;
 
                 }
               ).catch(
@@ -323,7 +323,7 @@
                 });
             }
             Bus.$emit('cityName',_this.cityName);
-            _this.isLoading = false;
+
           },
           getWeatherInfo(key){
             const  _this = this;
