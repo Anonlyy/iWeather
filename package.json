@@ -18,7 +18,8 @@
     "vue": "^2.5.2",
     "vue-awesome-swiper": "^3.0.4",
     "vue-cookies": "^1.5.4",
-    "vue-router": "^3.0.1"
+    "vue-router": "^3.0.1",
+    "vueg": "^1.4.5"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",
@@ -50,7 +51,6 @@
     "vue-loader": "^13.3.0",
     "vue-style-loader": "^3.0.1",
     "vue-template-compiler": "^2.5.2",
-    "vueg": "^1.2.9",
     "vuex": "^3.0.1",
     "webpack": "^3.6.0",
     "webpack-bundle-analyzer": "^2.9.0",

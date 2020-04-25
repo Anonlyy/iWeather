@@ -13,8 +13,8 @@ import 'swiper/dist/css/swiper.css';
 //weather Icon
 import "./assets/weather-icons.min.css";
 
-import 'vueg/css/transition-min.css'
-import vueg from 'vueg'
+// import 'vueg/css/transition-min.css'
+// import vueg from 'vueg'
 //iview
 import { Button, Icon,Spin,Input,Message,Modal } from 'iview';
 import 'iview/dist/styles/iview.css';
@@ -31,7 +31,7 @@ const options={
   shadow:false,                  //值为false，转场时没有阴影的层次效果
   disable: false,               //禁用转场动画，默认为false，嵌套路由默认为true
 }
-Vue.use(vueg, router,options);
+// Vue.use(vueg, router,options);
 
 Vue.component('Button', Button);
 Vue.component('Icon', Icon);
