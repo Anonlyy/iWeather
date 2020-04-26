@@ -169,7 +169,7 @@ export default ({
    * @returns {*}
    */
   getCityId(key){
-    return axios.get(`https://weixin.jirengu.com/weather/cityid?location=${key}`);
+    return axios.get(`http://api.jirengu.com/city.php/cityid?location=${key}`);
   },
 
   /**
@@ -178,20 +178,20 @@ export default ({
    * @returns {*}
    */
   getWeatherInfo(cityId){
-    return axios.get(`https://weixin.jirengu.com/weather/now?cityid=${cityId}`)
+    return axios.get(`http://api.jirengu.com/city.php/now?cityid=${cityId}`)
   },
 
   /**
    * 获取当前城市的天气信息
    */
   getCurrentWeatherInfo(){
-    return axios.get(`https://weixin.jirengu.com/weather`)
+    return axios.get(`http://api.jirengu.com/getWeather.php`)
   },
   getSingleCurrentWeatherInfo(){
-    return axios.get(`https://weixin.jirengu.com/weather`).then(res=>res.data);
+    return axios.get(`http://api.jirengu.com/getWeather.php`).then(res=>res.data);
   },
   getSingleWeatherInfo(cityId){
-    return axios.get(`https://weixin.jirengu.com/weather/now?cityid=${cityId}`).then(res=>res.data);
+    return axios.get(`http://api.jirengu.com/city.php/now?cityid=${cityId}`).then(res=>res.data);
   },
   /**
    * 获取天气code码

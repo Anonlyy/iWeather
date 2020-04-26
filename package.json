@@ -19,7 +19,7 @@
     "vue-awesome-swiper": "^3.0.4",
     "vue-cookies": "^1.5.4",
     "vue-router": "^3.0.1",
-    "vueg": "^1.4.5"
+    "vueg": "~1.4.5"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",

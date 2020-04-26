@@ -146,7 +146,7 @@
             return {
               innerHeight:0,
               ListHeight:0,
-              cityName:'东莞',
+              cityName:'',
               cityIdList: [],
               currentWeatherInfo:new WeatherInfo('null','null','null','null','null','null','null'), //当天天气信息
               weatherNotice:new WeatherNotice('xx','xx','xx','xx'),   //天气提示
@@ -275,6 +275,7 @@
         },
         methods:{
           getFirstWeatherInfo(){
+            debugger
             const _this = this;
             if(_this.$cookies.isKey('location')){
               let  locationWeatherInfo = JSON.parse(_this.$cookies.get('location'));
@@ -289,9 +290,10 @@
             else{
               _this.api.getCurrentWeatherInfo().then(
                 res=>{
-                  _this.cityName = res.data.weather[0].city_name;
+                  debugger
+                  _this.cityName = res.data.results[0].city_name;
 
-                  let data = res.data.weather[0];
+                  let data = res.data.results[0];
                   let suggest = data.today.suggestion;
                   _this.currentWeatherInfo = new WeatherInfo(data.city_id,data.city_name,data.now.text,data.last_update,_this.api.getCodeIcon(data.now.code).iconName,data.now.air_quality.city.quality,data.future[0].low+' ~ '+data.future[0].high)
                   _this.weatherNotice = new WeatherNotice(data.now.temperature,data.now.wind_direction,data.now.wind_scale,data.now.pressure);
@@ -338,7 +340,7 @@
             else{
               _this.api.getWeatherInfo(cityId).then(
                 res=>{
-                  let data = res.data.weather[0];
+                  let data = res.data.results[0];
                   let suggest = data.today.suggestion;
                   let currentWeather = _this.weatherInfoList[parseInt(key)-1].normalWeatherInfo;
                   currentWeather.weather = new WeatherInfo(data.city_id,data.city_name,data.now.text,data.last_update,_this.api.getCodeIcon(data.now.code).iconName,data.now.air_quality.city.quality,data.future[0].low+' ~ '+data.future[0].high)
