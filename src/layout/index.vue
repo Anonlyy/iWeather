@@ -289,7 +289,6 @@
             else{
               _this.api.getCurrentWeatherInfo().then(
                 res=>{
-                  debugger
                   _this.cityName = res.data.results[0].city_name;
 
                   let data = res.data.results[0];
@@ -320,7 +319,7 @@
                 }
               ).catch(
                 error=>{
-                  _this.$Message.error('获取当前天气信息错误'+error);
+                  _this.$Message.error('获取天气信息错误'+error);
                 });
             }
             Bus.$emit('cityName',_this.cityName);
