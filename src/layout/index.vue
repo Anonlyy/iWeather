@@ -116,7 +116,7 @@
                 </li>
               </ul>
               <div class="content-footer clearfix">
-                <div class="footer-item" v-for="item in weatherItem.normalWeatherInfo.todaySuggestionList">
+                <div class="footer-item" v-for="(item, index) in weatherItem.normalWeatherInfo.todaySuggestionList" :key="index">
                   <span class="item-header">
                     <Icon :type="item.icon" size="30"></Icon>
                   </span>
