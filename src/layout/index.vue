@@ -275,7 +275,6 @@
         },
         methods:{
           getFirstWeatherInfo(){
-            debugger
             const _this = this;
             if(_this.$cookies.isKey('location')){
               let  locationWeatherInfo = JSON.parse(_this.$cookies.get('location'));
